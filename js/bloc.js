@@ -1,44 +1,20 @@
 export class Bloc {
   constructor() {
-    this.T_MINO = {
-      index: 0,
-      bloc: [
-        [
-          [0, 0, 0],
-          [1, 1, 1],
-          [0, 1, 0]
-        ],
-        [
-          [0, 1, 0],
-          [0, 1, 1],
-          [0, 1, 0]
-        ],
-        [
-          [0, 1, 0],
-          [1, 1, 1],
-          [0, 0, 0]
-        ],
-        [
-          [0, 1, 0],
-          [1, 1, 0],
-          [0, 1, 0]
-        ],
-      ]
-    },
-      this.O_MINO = {
-        index: 0,
-        bloc: [
-          [
-            [0, 0, 0],
-            [0, 1, 1],
-            [0, 1, 1]
-          ]
-        ]
-      },
-      this.Z_MINO = {
-        index: 0,
-        beforIndex: 0,
-        bloc: [
+    this.MINOS = ["Z", "S", "L", "I", "O", "T", "J"];
+    this.index = 0;
+    this.prevIndex = 0;
+    this.position = this.getPosition();
+    this.x = 3;
+    this.y = 0;
+    this.color;
+  }
+
+  getPosition() {
+    let MINO = this.MINOS[Math.floor(Math.random() * 7)];
+    this.mino = MINO;
+    switch (MINO) {
+      case "Z":
+        MINO = [
           [
             [0, 0, 0],
             [1, 1, 0],
@@ -49,11 +25,10 @@ export class Bloc {
             [1, 1, 0],
             [1, 0, 0]
           ]
-        ]
-      },
-      this.S_MINO = {
-        index: 0,
-        bloc: [
+        ];
+        break;
+      case "S":
+        MINO = [
           [
             [0, 0, 0],
             [0, 1, 1],
@@ -65,30 +40,10 @@ export class Bloc {
             [0, 0, 1]
           ]
         ]
-      },
-      this.J_MINO = {
-        index: 0,
-        bloc: [
-          [
-            [0, 1, 0],
-            [0, 1, 0],
-            [1, 1, 0]
-          ],
-          [
-            [0, 0, 0],
-            [1, 0, 0],
-            [1, 1, 1]
-          ],
-          [
-            [1, 1, 0],
-            [1, 0, 0],
-            [1, 0, 0]
-          ]
-        ]
-      },
-      this.L_MINO = {
-        index: 0,
-        bloc: [
+
+        break;
+      case "L":
+        MINO = [
           [
             [1, 0, 0],
             [1, 0, 0],
@@ -105,11 +60,9 @@ export class Bloc {
             [0, 1, 0]
           ]
         ]
-      },
-      this.I_MINO = {
-        index: 0,
-        beforIndex: 0,
-        bloc: [
+        break;
+      case "I":
+        MINO = [
           [
             [0, 1, 0, 0],
             [0, 1, 0, 0],
@@ -123,21 +76,100 @@ export class Bloc {
             [0, 0, 0, 0]
           ]
         ]
-      }
+        break;
+      case "O":
+        MINO = [
+          [
+            [0, 0, 0],
+            [0, 1, 1],
+            [0, 1, 1]
+          ]
+        ]
+        break;
+      case "T":
+        MINO = [
+          [
+            [0, 0, 0],
+            [1, 1, 1],
+            [0, 1, 0]
+          ],
+          [
+            [0, 1, 0],
+            [0, 1, 1],
+            [0, 1, 0]
+          ],
+          [
+            [0, 1, 0],
+            [1, 1, 1],
+            [0, 0, 0]
+          ],
+          [
+            [0, 1, 0],
+            [1, 1, 0],
+            [0, 1, 0]
+          ]
+        ]
+        break;
+      case "J":
+        MINO = [
+          [
+            [0, 1, 0],
+            [0, 1, 0],
+            [1, 1, 0]
+          ],
+          [
+            [0, 0, 0],
+            [1, 0, 0],
+            [1, 1, 1]
+          ],
+          [
+            [1, 1, 0],
+            [1, 0, 0],
+            [1, 0, 0]
+          ]
+        ]
+        break;
+    }
+
+    return MINO;
   }
 
-  getT_MINO() {
-    return this.T_MINO.bloc[0];
+  currentPosition() {
+    return this.position[this.getIndex()];
   }
-  getI_MINO() {
-    return this.I_MINO.bloc[0];
+  nextPosition() {
+    this.index++;
+    if (this.position.length == this.index) {
+      this.index = 0;
+    }
+    this.prevIndex = this.index;
+    return this.position[this.getIndex()];
   }
-  getZ_MINO() {
-    return this.Z_MINO.bloc[0];
+  prevPosition() {
+    return this.position[this.getPrevIndex()];
+  }
+  getIndex() {
+    return this.index;
+  }
+  getPrevIndex() {
+    return this.prevIndex;
+  }
+  getX() {
+    return this.x;
+  }
+  getY() {
+    return this.y;
   }
 
-  getInstance() {
-    return getT_MINO();
+  rigtX() {
+    this.x++;
   }
-  
+  leftX() {
+    this.x--;
+  }
+  downY() {
+    this.y++;
+  }
+
+
 }

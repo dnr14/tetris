@@ -11,16 +11,18 @@ class App {
       left: "ArrowLeft"
     };
     this.canvas = document.createElement("canvas");
-    this.ctx = this.canvas.getContext("2d");
-    this.ctx.fillStyle = "red";
     document.body.appendChild(this.canvas);
+    this.ctx = this.canvas.getContext("2d");
+    this.REMOVE_COLOR = "white";
+    this.CURRENT_COLOR = "black";
     this.init();
-    this.eventHandler();
   }
   init() {
     this.setCanasW();
     this.setCanasH();
-    // this.startDraw();
+    this.eventHandler();
+    this.createBloc();
+    // this.timer();
   }
   setCanasW() {
     this.canvas.width = this.CULMNS * this.CELL;
@@ -29,54 +31,55 @@ class App {
     this.canvas.height = this.ROWS * this.CELL;
   }
 
+  createBloc() {
+    this.bloc = new Bloc();
+    this.draw(this.bloc.nextPosition(), this.CURRENT_COLOR, this.bloc.getX(), this.bloc.getY());
+  }
+
   eventHandler() {
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
         case this.KEY.down:
+          this.draw(this.bloc.prevPosition(), this.REMOVE_COLOR, this.bloc.getX(), this.bloc.getY());
+          this.draw(this.bloc.nextPosition(), this.CURRENT_COLOR, this.bloc.getX(), this.bloc.getY());
           break;
         case this.KEY.left:
+          this.bloc.leftX();
+          this.draw(this.bloc.currentPosition(), this.REMOVE_COLOR, this.bloc.getX() + 1, this.bloc.getY());
+          this.draw(this.bloc.currentPosition(), this.CURRENT_COLOR, this.bloc.getX(), this.bloc.getY());
           break;
-          case this.KEY.right:
-          this.clearDraw(this.Z_MINO.array[this.Z_MINO.beforIndex]);
-          this.startDraw(this.Z_MINO.array[this.Z_MINO.index]);
-          this.getZ_MINO();
+        case this.KEY.right:
+          this.bloc.rigtX();
+          this.draw(this.bloc.currentPosition(), this.REMOVE_COLOR, this.bloc.getX() - 1, this.bloc.getY());
+          this.draw(this.bloc.currentPosition(), this.CURRENT_COLOR, this.bloc.getX(), this.bloc.getY());
           break;
       }
     });
   }
 
-  
-  // startDraw(array) {
-  //   let index = 0;
-  //   if (array instanceof Array) {
-  //     array.forEach(x => {
-  //       let startX = 3;
-  //       x.forEach(y => {
-  //         if (y == 1) { this.ctx.fillStyle ="black";
-  //           this.ctx.fillRect(startX * this.CELL, index * this.CELL, this.CELL, this.CELL);
-  //         }
-  //         startX++;
-  //       });
-  //       index++;
-  //     });
-  //   }
-  // }
-  // clearDraw(array) {
-  //   let index = 0;
-  //   if (array instanceof Array) {
-  //     array.forEach(x => {
-  //       let startX = 3;
-  //       x.forEach(y => {
-  //         if (y == 1) {
-  //           this.ctx.fillStyle ="white";
-  //           this.ctx.fillRect(startX * this.CELL, index * this.CELL, this.CELL, this.CELL);
-  //         }
-  //         startX++;
-  //       });
-  //       index++;
-  //     });
-  //   }
-  // }
+  draw(array, color, startX, startY) {
+    let y = startY;
+    if (array instanceof Array) {
+      array.forEach(row => {
+        let x = startX;
+        row.forEach(culomn => {
+          if (culomn == 1) {
+            this.ctx.fillStyle = color;
+            this.ctx.fillRect(this.CELL * x, this.CELL * y, this.CELL, this.CELL);
+          }
+          x++;
+        });
+        y++;
+      });
+    }
+  }
+  timer() {
+    setInterval(() => {
+      this.bloc.downY();
+      this.draw(this.bloc.currentPosition(), this.REMOVE_COLOR, this.bloc.getX(), this.bloc.getY() - 1);
+      this.draw(this.bloc.currentPosition(), this.CURRENT_COLOR, this.bloc.getX(), this.bloc.getY());
+    }, 1000);
+  }
 }
 
 new App();
