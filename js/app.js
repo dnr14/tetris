@@ -2,7 +2,7 @@ import { Block } from "./block.js";
 
 class App {
 
-  constructor() {
+  constructor(btn) {
     this.color = ["red", "indigo", "blue", "yellow", "green", "orange", "purple"];
     this.BLOCKSIZE = 40;
     this.ROWS = 10;
@@ -13,6 +13,8 @@ class App {
       left: 37,
       space: 32
     }
+    this.btn = btn;
+    this.btn.addEventListener('click', this.start.bind(this));
     this.canvas = document.createElement("canvas");
     this.ctx = this.canvas.getContext("2d");
     this.ctx.canvas.width = this.BLOCKSIZE * this.ROWS;
@@ -238,8 +240,5 @@ class App {
   }
 }
 
-window.onload = () => {
-  const app = new App();
-  const button = document.querySelector(".start");
-  button.addEventListener('click', app.start.bind(app));
-}
+const button = document.querySelector(".start");
+const app = new App(button);

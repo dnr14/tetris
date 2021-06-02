@@ -33,10 +33,6 @@ canvas {
   letter-spacing: .5rem;
   cursor: pointer;
 }
-
-.start:active {
-  background-color: red;
-}
 .start:hover{
   background-color: #FFF;
   color: #000;
