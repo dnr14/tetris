@@ -3,6 +3,7 @@ import { Block } from "./block.js";
 class App {
 
   constructor() {
+    this.color = ["red", "indigo", "blue", "yellow", "green", "orange", "purple"];
     this.BLOCKSIZE = 40;
     this.ROWS = 10;
     this.COLUMNS = 20;
@@ -26,7 +27,7 @@ class App {
     this.eventHandler();
     this.matricsDraw();
     this.createBlock();
-    this.blockDraw();
+    // this.timer();
   }
   eventHandler() {
     window.addEventListener('keydown', e => {
@@ -61,24 +62,29 @@ class App {
   }
 
   matricsDraw() {
-    this.ctx.fillStyle = "white";
     this.matrics.forEach((rows, y) => {
-      rows.forEach((columns, x) => {
-        this.ctx.fillRect(x, y, 0.99, 0.99);
+      rows.forEach((values, x) => {
+        if (values != 0) {
+          this.ctx.fillStyle = this.color[values - 1];
+        } else {
+          this.ctx.fillStyle = "white";
+        }
+        this.ctx.fillRect(x, y, 1, 1);
       });
     });
   }
 
   createBlock() {
     this.block = new Block().getMINO();
+    this.blockDraw();
   }
 
   blockDraw() {
-    this.clear();
+    this.matricsDraw();
     this.ctx.fillStyle = this.block.color;
     this.block.shape.forEach((rows, y) => {
       rows.forEach((values, x) => {
-        if (values == 1) {
+        if (values > 0) {
           this.ctx.fillRect(this.block.x + x, this.block.y + y, 0.98, 0.98);
         }
       });
@@ -86,25 +92,69 @@ class App {
   }
   rightMove() {
     this.block.x++;
-    this.validation() == true ? this.blockDraw() : this.block.x--;
+    if (this.blockCheck() && this.validation()) {
+      this.blockDraw();
+    } else {
+      this.block.x--;
+    }
   }
+
   leftMove() {
     this.block.x--;
-    this.validation() == true ? this.blockDraw() : this.block.x++;
+    if (this.blockCheck() && this.validation()) {
+      this.blockDraw();
+    } else {
+      this.block.x++;
+    }
   }
+
   downMove() {
     this.block.y++;
-    this.validation() == true ? this.blockDraw() : this.block.y--;
+    let check = this.validation() && this.blockCheck();
+    if (check) {
+      this.blockDraw();
+    } else {
+      this.block.y--;
+      this.기록();
+    }
+  }
+
+  기록() {
+    this.block.shape.forEach((rows, dy) => {
+      rows.forEach((values, dx) => {
+        if (values > 0) {
+          this.matrics[dy + this.block.y][dx + this.block.x] = values;
+        }
+      });
+    });
+    this.matricsDraw();
+    this.fullBlockCheck();
+    this.createBlock();
   }
 
   validation() {
     let isCheck = true;
     this.block.shape.forEach((rows, y) => {
       rows.forEach((values, x) => {
-        if (values == 1) {
+        if (values > 0) {
           if (this.block.x + x == this.ROWS
             || this.block.y + y == this.COLUMNS
             || this.block.x + x < 0) {
+            isCheck = false;
+          }
+        }
+      });
+    });
+    return isCheck;
+  }
+
+  blockCheck() {
+    let isCheck = true;
+    this.block.shape.forEach((rows, y) => {
+      rows.forEach((values, x) => {
+        if (values > 0) {
+          let value = this.matrics[this.block.y + y][this.block.x + x];
+          if (value != 0) {
             isCheck = false;
           }
         }
@@ -129,12 +179,37 @@ class App {
       });
     });
 
-    this.validation() == true ? this.blockDraw() : this.rotate();
+    if (this.blockCheck() && this.validation()) {
+      this.blockDraw();
+    } else {
+      this.rotate();
+    }
   }
 
-  clear() {
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+  fullBlockCheck() {
+    let num = [];
+    for (let y = this.COLUMNS - 1; y >= 0; --y) {
+      let istrue = this.matrics[y].every(x => {
+        return x > 0;
+      });
+      if (istrue == true) {
+        num.push(y);
+        this.matrics.splice(y, 1);
+      }
+    }
+
+    if (num.length != 0) {
+      num.forEach(x => {
+        this.matrics.unshift([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+      });
+    }
+  }
+
+
+  timer() {
+    const timer = setInterval(() => {
+      this.downMove();
+    }, 500);
   }
 }
 
