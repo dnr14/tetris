@@ -18,19 +18,23 @@ class App {
     this.ctx.canvas.width = this.BLOCKSIZE * this.ROWS;
     this.ctx.canvas.height = this.BLOCKSIZE * this.COLUMNS;
     this.ctx.scale(this.BLOCKSIZE, this.BLOCKSIZE);
-    document.body.appendChild(this.canvas);
+    document.querySelector("#root").appendChild(this.canvas);
+    this.gameStart = false;
     this.matrics = this.createMatrics();
-    this.init();
   }
 
-  init() {
-    this.eventHandler();
-    this.matricsDraw();
-    this.createBlock();
-    // this.timer();
+  start() {
+    if (!this.gameStart) {
+      this.gameStart = !this.gameStart;
+      this.eventHandler();
+      this.matricsDraw();
+      this.createBlock();
+      this.timer();
+    }
   }
+
   eventHandler() {
-    window.addEventListener('keydown', e => {
+    this.event = (e) => {
       switch (e.keyCode) {
         case this.KEY.space:
           this.rotate();
@@ -45,8 +49,9 @@ class App {
           this.downMove();
           break;
       }
+    };
 
-    });
+    window.addEventListener('keydown', this.event);
   }
 
   createMatrics() {
@@ -66,10 +71,11 @@ class App {
       rows.forEach((values, x) => {
         if (values != 0) {
           this.ctx.fillStyle = this.color[values - 1];
+          this.ctx.fillRect(x, y, 0.95, 0.95);
         } else {
           this.ctx.fillStyle = "white";
+          this.ctx.fillRect(x, y, 1, 1);
         }
-        this.ctx.fillRect(x, y, 1, 1);
       });
     });
   }
@@ -90,6 +96,7 @@ class App {
       });
     });
   }
+
   rightMove() {
     this.block.x++;
     if (this.blockCheck() && this.validation()) {
@@ -115,11 +122,14 @@ class App {
       this.blockDraw();
     } else {
       this.block.y--;
-      this.기록();
+      this.matricsValueSave();
+      if (!this.gameOver()) {
+        this.createBlock();
+      }
     }
   }
 
-  기록() {
+  matricsValueSave() {
     this.block.shape.forEach((rows, dy) => {
       rows.forEach((values, dx) => {
         if (values > 0) {
@@ -127,9 +137,8 @@ class App {
         }
       });
     });
-    this.matricsDraw();
-    this.fullBlockCheck();
-    this.createBlock();
+    // this.matricsDraw();
+    this.matricsFullCheck();
   }
 
   validation() {
@@ -164,9 +173,11 @@ class App {
   }
 
   rotate() {
-    this.block.shape.forEach((rows) => {
-      rows.reverse();
-    });
+    if (this.block.shape.length !== 4) {
+      this.block.shape.forEach((rows) => {
+        rows.reverse();
+      });
+    }
 
     let array = [];
     this.block.shape.forEach(rows => {
@@ -186,7 +197,7 @@ class App {
     }
   }
 
-  fullBlockCheck() {
+  matricsFullCheck() {
     let num = [];
     for (let y = this.COLUMNS - 1; y >= 0; --y) {
       let istrue = this.matrics[y].every(x => {
@@ -197,14 +208,28 @@ class App {
         this.matrics.splice(y, 1);
       }
     }
-
     if (num.length != 0) {
       num.forEach(x => {
-        this.matrics.unshift([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        this.matrics.unshift(Array(this.ROWS).fill(0));
+
       });
     }
   }
+  gameOver() {
+    let over = this.matrics[0].some(x => {
+      return x > 0;
+    });
 
+    if (over == true) {
+      document.querySelector(".gameover").style.display = "flex";
+      this.eventRemove();
+    }
+    return over;
+  }
+
+  eventRemove() {
+    window.removeEventListener('keydown', this.event);
+  }
 
   timer() {
     const timer = setInterval(() => {
@@ -214,5 +239,7 @@ class App {
 }
 
 window.onload = () => {
-  new App();
+  const app = new App();
+  const button = document.querySelector(".start");
+  button.addEventListener('click', app.start.bind(app));
 }

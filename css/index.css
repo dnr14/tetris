@@ -1,3 +1,44 @@
-canvas{
+canvas {
   border: 1px solid black;
+  display: block
+}
+
+#root {
+  position: relative;
+}
+
+.gameover {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  top: 150px;
+  width: 400px;
+  height: 100px;
+  margin: auto;
+  text-align: center;
+  color: red;
+  font-size: 2rem;
+  display: none;
+}
+
+.start {
+  width: 400px;
+  height: 50px;
+  outline: none;
+  border: none;
+  background-color: #333;
+  font-size: 2rem;
+  letter-spacing: .5rem;
+  cursor: pointer;
+}
+
+.start:active {
+  background-color: red;
+}
+.start:hover{
+  background-color: #FFF;
+  color: #000;
+  border: 1px solid #000;
 }

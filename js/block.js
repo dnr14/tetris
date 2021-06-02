@@ -45,9 +45,8 @@ export class Block {
         x: 3,
         y: 0,
         shape: [
-          [0, 0, 0],
-          [0, 5, 5],
-          [0, 5, 5],
+          [5, 5],
+          [5, 5],
         ],
         color: "green"
       },
@@ -60,9 +59,9 @@ export class Block {
           [0, 6, 0, 0],
           [0, 6, 0, 0]
         ],
-        color: "orange"
+        color: "orange",
       },
-      {// I
+      {// T
         x: 3,
         y: 0,
         shape: [
@@ -70,7 +69,7 @@ export class Block {
           [7, 7, 7],
           [0, 7, 0]
         ],
-        color: "purple"
+        color: "purple",
       }
     ];
   }
