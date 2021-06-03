@@ -4,7 +4,7 @@ class App {
 
   constructor(btn) {
     this.color = ["red", "indigo", "blue", "yellow", "green", "orange", "purple"];
-    this.BLOCKSIZE = 40;
+    this.BLOCKSIZE = 30;
     this.ROWS = 10;
     this.COLUMNS = 20;
     this.KEY = {
@@ -16,18 +16,32 @@ class App {
     this.btn = btn;
     this.btn.addEventListener('click', this.start.bind(this));
     this.canvas = document.createElement("canvas");
+    this.nextCanvas = document.querySelector(".nextblock canvas");
+    this.$score = document.querySelector(".score");
     this.ctx = this.canvas.getContext("2d");
     this.ctx.canvas.width = this.BLOCKSIZE * this.ROWS;
     this.ctx.canvas.height = this.BLOCKSIZE * this.COLUMNS;
     this.ctx.scale(this.BLOCKSIZE, this.BLOCKSIZE);
-    document.querySelector("#root").appendChild(this.canvas);
+    this.CTX_BACKGROUND_COLOR = "white";
+    this.score = 0;
+
+    this.nextCtx = this.nextCanvas.getContext("2d");
+    this.nextCtx.scale(this.BLOCKSIZE, this.BLOCKSIZE);
+
     this.gameStart = false;
-    this.matrics = this.createMatrics();
+    this.setElement();
+  }
+
+  setElement() {
+    document.querySelector("#root").appendChild(this.canvas);
+    document.querySelector(".gameover").style.width = `${this.ctx.canvas.width}px`;
+    this.btn.style.width = `${this.ctx.canvas.width}px`;
   }
 
   start() {
     if (!this.gameStart) {
       this.gameStart = !this.gameStart;
+      this.matrics = this.createMatrics();
       this.eventHandler();
       this.matricsDraw();
       this.createBlock();
@@ -52,30 +66,24 @@ class App {
           break;
       }
     };
-
     window.addEventListener('keydown', this.event);
   }
 
   createMatrics() {
-    let array1 = [];
-    for (let y = 0; y < this.COLUMNS; ++y) {
-      let array2 = [];
-      for (let x = 0; x < this.ROWS; ++x) {
-        array2.push(0);
-      }
-      array1.push(array2);
-    }
-    return array1;
+    return Array.from(
+      { length: this.COLUMNS }, () => Array(this.ROWS).fill(0)
+    );
   }
 
   matricsDraw() {
+    this.canvasClear();
     this.matrics.forEach((rows, y) => {
       rows.forEach((values, x) => {
         if (values != 0) {
           this.ctx.fillStyle = this.color[values - 1];
-          this.ctx.fillRect(x, y, 0.95, 0.95);
+          this.ctx.fillRect(x, y, 0.90, 0.90);
         } else {
-          this.ctx.fillStyle = "white";
+          this.ctx.fillStyle = this.CTX_BACKGROUND_COLOR;
           this.ctx.fillRect(x, y, 1, 1);
         }
       });
@@ -84,7 +92,37 @@ class App {
 
   createBlock() {
     this.block = new Block().getMINO();
+    this.nextblock = new Block().getMINO();
+    this.nextblockDraw();
     this.blockDraw();
+  }
+
+  createblockAndChange() {
+    this.block = this.nextblock;
+    this.nextblock = new Block().getMINO();
+    this.nextblockDraw();
+    this.blockDraw();
+  }
+
+  nextblockDraw() {
+    this.nextCanvasClear();
+    this.nextblock.shape.forEach((rows, y) => {
+      rows.forEach((values, x) => {
+        this.nextCtx.fillStyle = this.nextblock.color;
+        if (values > 0) {
+          this.nextCtx.fillRect(1 + x, 1 + y, 0.90, 0.90);
+        }
+      });
+    });
+  }
+
+  canvasClear() {
+    this.ctx.fillStyle = this.CTX_BACKGROUND_COLOR;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+  nextCanvasClear() {
+    this.nextCtx.fillStyle = this.CTX_BACKGROUND_COLOR;
+    this.nextCtx.fillRect(0, 0, this.nextCtx.canvas.width, this.nextCtx.canvas.height);
   }
 
   blockDraw() {
@@ -93,7 +131,7 @@ class App {
     this.block.shape.forEach((rows, y) => {
       rows.forEach((values, x) => {
         if (values > 0) {
-          this.ctx.fillRect(this.block.x + x, this.block.y + y, 0.98, 0.98);
+          this.ctx.fillRect(this.block.x + x, this.block.y + y, 0.90, 0.90);
         }
       });
     });
@@ -101,20 +139,22 @@ class App {
 
   rightMove() {
     this.block.x++;
-    if (this.blockCheck() && this.validation()) {
-      this.blockDraw();
-    } else {
-      this.block.x--;
-    }
+    this.blockCheck() && this.validation() ? this.blockDraw() : this.block.x--;
+    // if (this.blockCheck() && this.validation()) {
+    //   this.blockDraw();
+    // } else {
+    //   this.block.x--;
+    // }
   }
 
   leftMove() {
     this.block.x--;
-    if (this.blockCheck() && this.validation()) {
-      this.blockDraw();
-    } else {
-      this.block.x++;
-    }
+    this.blockCheck() && this.validation() ? this.blockDraw() : this.block.x++;
+    // if (this.blockCheck() && this.validation()) {
+    //   this.blockDraw();
+    // } else {
+    //   this.block.x++;
+    // }
   }
 
   downMove() {
@@ -126,7 +166,7 @@ class App {
       this.block.y--;
       this.matricsValueSave();
       if (!this.gameOver()) {
-        this.createBlock();
+        this.createblockAndChange();
       }
     }
   }
@@ -139,7 +179,6 @@ class App {
         }
       });
     });
-    // this.matricsDraw();
     this.matricsFullCheck();
   }
 
@@ -213,10 +252,13 @@ class App {
     if (num.length != 0) {
       num.forEach(x => {
         this.matrics.unshift(Array(this.ROWS).fill(0));
-
       });
+
+      this.score += num.length * 10;
+      this.$score.textContent = this.score;
     }
   }
+
   gameOver() {
     let over = this.matrics[0].some(x => {
       return x > 0;
