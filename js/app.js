@@ -1,19 +1,18 @@
 import { Block } from "./block.js";
 
 class App {
-
-  constructor(btn) {
+  constructor() {
     this.color = ["red", "indigo", "blue", "yellow", "green", "orange", "purple"];
     this.BLOCKSIZE = 30;
-    this.ROWS = 10;
-    this.COLUMNS = 20;
+    this.ROWS = 15;
+    this.COLUMNS = 25;
     this.KEY = {
       down: 40,
       right: 39,
       left: 37,
       space: 32
     }
-    this.btn = btn;
+    this.btn = document.querySelector(".start");
     this.btn.addEventListener('click', this.start.bind(this));
     this.canvas = document.createElement("canvas");
     this.nextCanvas = document.querySelector(".nextblock canvas");
@@ -38,6 +37,7 @@ class App {
     this.btn.style.width = `${this.ctx.canvas.width}px`;
   }
 
+  // 게임 시작
   start() {
     if (!this.gameStart) {
       this.gameStart = !this.gameStart;
@@ -49,6 +49,9 @@ class App {
     }
   }
 
+  // 스페이스 : 블록 자리 변경
+  // 아래 : 블록 한칸 이동
+  // 좌우 : 블록 좌우 한칸 이동
   eventHandler() {
     this.event = (e) => {
       switch (e.keyCode) {
@@ -69,12 +72,16 @@ class App {
     window.addEventListener('keydown', this.event);
   }
 
+  // this.COLUMNS * this.ROWS 갯수 모든 요소 0으로 생성
   createMatrics() {
     return Array.from(
       { length: this.COLUMNS }, () => Array(this.ROWS).fill(0)
     );
   }
 
+  // 쌓여있는 블록 그리는 작업
+  // 0이면 블록 없음
+  // 0 이상이면 블록 있음
   matricsDraw() {
     this.canvasClear();
     this.matrics.forEach((rows, y) => {
@@ -82,7 +89,7 @@ class App {
         if (values != 0) {
           this.ctx.fillStyle = this.color[values - 1];
           this.ctx.fillRect(x, y, 0.90, 0.90);
-        } else {
+        } else if (values > 0) {
           this.ctx.fillStyle = this.CTX_BACKGROUND_COLOR;
           this.ctx.fillRect(x, y, 1, 1);
         }
@@ -90,6 +97,7 @@ class App {
     });
   }
 
+  //첫 실행 시 블록 생성
   createBlock() {
     this.block = new Block().getMINO();
     this.nextblock = new Block().getMINO();
@@ -97,6 +105,7 @@ class App {
     this.blockDraw();
   }
 
+  //첫 실행 이후 블록 생성
   createblockAndChange() {
     this.block = this.nextblock;
     this.nextblock = new Block().getMINO();
@@ -104,6 +113,7 @@ class App {
     this.blockDraw();
   }
 
+  // 다음에 나올 블록 캔버스에 그리기
   nextblockDraw() {
     this.nextCanvasClear();
     this.nextblock.shape.forEach((rows, y) => {
@@ -116,15 +126,18 @@ class App {
     });
   }
 
+  // 캔버스에 그리기 전에 모두 한번 this.CTX_BACKGROUND_COLOR로 초기화
   canvasClear() {
     this.ctx.fillStyle = this.CTX_BACKGROUND_COLOR;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
+  // 다음 블록 캔버스에 그리기 전에 모두 한번 this.CTX_BACKGROUND_COLOR로 초기화
   nextCanvasClear() {
     this.nextCtx.fillStyle = this.CTX_BACKGROUND_COLOR;
     this.nextCtx.fillRect(0, 0, this.nextCtx.canvas.width, this.nextCtx.canvas.height);
   }
 
+  // 현재 블록 그리기
   blockDraw() {
     this.matricsDraw();
     this.ctx.fillStyle = this.block.color;
@@ -137,6 +150,7 @@ class App {
     });
   }
 
+  // 현재 나온 블록 오른쪽이동
   rightMove() {
     this.block.x++;
     this.blockCheck() && this.validation() ? this.blockDraw() : this.block.x--;
@@ -147,6 +161,7 @@ class App {
     // }
   }
 
+  // 현재 나온 블록 왼쪽이동
   leftMove() {
     this.block.x--;
     this.blockCheck() && this.validation() ? this.blockDraw() : this.block.x++;
@@ -157,6 +172,7 @@ class App {
     // }
   }
 
+  // 블록 아래로 이동
   downMove() {
     this.block.y++;
     let check = this.validation() && this.blockCheck();
@@ -171,6 +187,7 @@ class App {
     }
   }
 
+  // 블록에 충돌 및 바닥에 도착 시 2차원배열에 값 넣기
   matricsValueSave() {
     this.block.shape.forEach((rows, dy) => {
       rows.forEach((values, dx) => {
@@ -182,6 +199,7 @@ class App {
     this.matricsFullCheck();
   }
 
+  // 블록이 캔버스 좌우 및 바닥에 도착했는지 확인
   validation() {
     let isCheck = true;
     this.block.shape.forEach((rows, y) => {
@@ -198,6 +216,7 @@ class App {
     return isCheck;
   }
 
+  // 좌우 및 바닥으로 이동 했을때 다음 칸에 블록이 있는지 체크
   blockCheck() {
     let isCheck = true;
     this.block.shape.forEach((rows, y) => {
@@ -213,7 +232,14 @@ class App {
     return isCheck;
   }
 
+  // 블록을 회전
+  // 현재 모양에서 리버스 후 45도 회전
+  //
+  // x 0 0      0 0 x        0 0 0
+  // x 0 0 ===> 0 0 x ====>  x x x
+  // x x 0      0 x x        0 0 x
   rotate() {
+    // I MINO는 리버스가 필요없어서 if으로 제한
     if (this.block.shape.length !== 4) {
       this.block.shape.forEach((rows) => {
         rows.reverse();
@@ -238,6 +264,12 @@ class App {
     }
   }
 
+
+
+  // 블록이 다 채워졌는지 확인 
+  // 매트릭스에 0이 없으면 블록이 꽉찬걸로 확인
+  // 0이 없는 배열 개수 만큼 splice로 제거 후 
+  // 0요소로 채운 새로운 배열 넣어준다.
   matricsFullCheck() {
     let num = [];
     for (let y = this.COLUMNS - 1; y >= 0; --y) {
@@ -259,6 +291,7 @@ class App {
     }
   }
 
+  // 매트릭트[0] 째에 블록이 있다면 게임 오버
   gameOver() {
     let over = this.matrics[0].some(x => {
       return x > 0;
@@ -271,10 +304,12 @@ class App {
     return over;
   }
 
+  // 게임오버 후 이벤트 제거
   eventRemove() {
     window.removeEventListener('keydown', this.event);
   }
 
+  // 0.5초마다 블록이 한칸 씩 내려간다.
   timer() {
     const timer = setInterval(() => {
       this.downMove();
@@ -282,5 +317,4 @@ class App {
   }
 }
 
-const button = document.querySelector(".start");
-const app = new App(button);
+new App();
