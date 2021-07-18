@@ -4,8 +4,8 @@ class App {
   constructor() {
     this.color = ["red", "indigo", "blue", "yellow", "green", "orange", "purple"];
     this.BLOCKSIZE = 30;
-    this.ROWS = 15;
     this.COLUMNS = 25;
+    this.ROWS = 15;
     this.KEY = {
       down: 40,
       right: 39,
@@ -34,7 +34,6 @@ class App {
   setElement() {
     document.querySelector("#root").appendChild(this.canvas);
     document.querySelector(".gameover").style.width = `${this.ctx.canvas.width}px`;
-    this.btn.style.width = `${this.ctx.canvas.width}px`;
   }
 
   // 게임 시작
