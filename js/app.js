@@ -1,8 +1,16 @@
-import { Block } from "./block.js";
+import Block from "./block.js";
 
 class App {
   constructor() {
-    this.color = ["red", "indigo", "blue", "yellow", "green", "orange", "purple"];
+    this.color = [
+      "red",
+      "indigo",
+      "blue",
+      "yellow",
+      "green",
+      "orange",
+      "purple",
+    ];
     this.BLOCKSIZE = 30;
     this.COLUMNS = 25;
     this.ROWS = 15;
@@ -10,10 +18,10 @@ class App {
       down: 40,
       right: 39,
       left: 37,
-      space: 32
-    }
+      space: 32,
+    };
     this.btn = document.querySelector(".start");
-    this.btn.addEventListener('click', this.start.bind(this));
+    this.btn.addEventListener("click", this.start.bind(this));
     this.canvas = document.createElement("canvas");
     this.nextCanvas = document.querySelector(".nextblock canvas");
     this.$score = document.querySelector(".score");
@@ -33,7 +41,7 @@ class App {
 
   setElement() {
     document.querySelector("#root").appendChild(this.canvas);
-    document.querySelector(".gameover").style.width = `${this.ctx.canvas.width}px`;
+    document.querySelector(".gameover").style.width = `100%`;
   }
 
   // 게임 시작
@@ -68,14 +76,12 @@ class App {
           break;
       }
     };
-    window.addEventListener('keydown', this.event);
+    window.addEventListener("keydown", this.event);
   }
 
   // this.COLUMNS * this.ROWS 갯수 모든 요소 0으로 생성
   createMatrics() {
-    return Array.from(
-      { length: this.COLUMNS }, () => Array(this.ROWS).fill(0)
-    );
+    return Array.from({ length: this.COLUMNS }, () => Array(this.ROWS).fill(0));
   }
 
   // 쌓여있는 블록 그리는 작업
@@ -87,7 +93,7 @@ class App {
       rows.forEach((values, x) => {
         if (values != 0) {
           this.ctx.fillStyle = this.color[values - 1];
-          this.ctx.fillRect(x, y, 0.90, 0.90);
+          this.ctx.fillRect(x, y, 0.9, 0.9);
         } else if (values > 0) {
           this.ctx.fillStyle = this.CTX_BACKGROUND_COLOR;
           this.ctx.fillRect(x, y, 1, 1);
@@ -119,7 +125,7 @@ class App {
       rows.forEach((values, x) => {
         this.nextCtx.fillStyle = this.nextblock.color;
         if (values > 0) {
-          this.nextCtx.fillRect(1 + x, 1 + y, 0.90, 0.90);
+          this.nextCtx.fillRect(1 + x, 1 + y, 0.9, 0.9);
         }
       });
     });
@@ -133,7 +139,12 @@ class App {
   // 다음 블록 캔버스에 그리기 전에 모두 한번 this.CTX_BACKGROUND_COLOR로 초기화
   nextCanvasClear() {
     this.nextCtx.fillStyle = this.CTX_BACKGROUND_COLOR;
-    this.nextCtx.fillRect(0, 0, this.nextCtx.canvas.width, this.nextCtx.canvas.height);
+    this.nextCtx.fillRect(
+      0,
+      0,
+      this.nextCtx.canvas.width,
+      this.nextCtx.canvas.height
+    );
   }
 
   // 현재 블록 그리기
@@ -143,7 +154,7 @@ class App {
     this.block.shape.forEach((rows, y) => {
       rows.forEach((values, x) => {
         if (values > 0) {
-          this.ctx.fillRect(this.block.x + x, this.block.y + y, 0.90, 0.90);
+          this.ctx.fillRect(this.block.x + x, this.block.y + y, 0.9, 0.9);
         }
       });
     });
@@ -204,9 +215,11 @@ class App {
     this.block.shape.forEach((rows, y) => {
       rows.forEach((values, x) => {
         if (values > 0) {
-          if (this.block.x + x == this.ROWS
-            || this.block.y + y == this.COLUMNS
-            || this.block.x + x < 0) {
+          if (
+            this.block.x + x == this.ROWS ||
+            this.block.y + y == this.COLUMNS ||
+            this.block.x + x < 0
+          ) {
             isCheck = false;
           }
         }
@@ -246,12 +259,12 @@ class App {
     }
 
     let array = [];
-    this.block.shape.forEach(rows => {
+    this.block.shape.forEach((rows) => {
       array.push([...rows]);
     });
 
     array.forEach((rows, x) => {
-      rows.forEach((values, y) => {
+      rows.forEach((_, y) => {
         this.block.shape[y][x] = array[x][y];
       });
     });
@@ -263,16 +276,14 @@ class App {
     }
   }
 
-
-
-  // 블록이 다 채워졌는지 확인 
+  // 블록이 다 채워졌는지 확인
   // 매트릭스에 0이 없으면 블록이 꽉찬걸로 확인
-  // 0이 없는 배열 개수 만큼 splice로 제거 후 
+  // 0이 없는 배열 개수 만큼 splice로 제거 후
   // 0요소로 채운 새로운 배열 넣어준다.
   matricsFullCheck() {
     let num = [];
     for (let y = this.COLUMNS - 1; y >= 0; --y) {
-      let istrue = this.matrics[y].every(x => {
+      let istrue = this.matrics[y].every((x) => {
         return x > 0;
       });
       if (istrue == true) {
@@ -281,7 +292,7 @@ class App {
       }
     }
     if (num.length != 0) {
-      num.forEach(x => {
+      num.forEach((x) => {
         this.matrics.unshift(Array(this.ROWS).fill(0));
       });
 
@@ -292,7 +303,7 @@ class App {
 
   // 매트릭트[0] 째에 블록이 있다면 게임 오버
   gameOver() {
-    let over = this.matrics[0].some(x => {
+    let over = this.matrics[0].some((x) => {
       return x > 0;
     });
 
@@ -305,7 +316,7 @@ class App {
 
   // 게임오버 후 이벤트 제거
   eventRemove() {
-    window.removeEventListener('keydown', this.event);
+    window.removeEventListener("keydown", this.event);
   }
 
   // 0.5초마다 블록이 한칸 씩 내려간다.

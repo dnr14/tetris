@@ -1,7 +1,8 @@
-export class Block {
+export default class Block {
   constructor() {
     this.MINOS = [
-      {//Z
+      {
+        //Z
         x: 3,
         y: 0,
         shape: [
@@ -9,9 +10,10 @@ export class Block {
           [0, 1, 1],
           [0, 0, 0],
         ],
-        color: "red"
+        color: "red",
       },
-      {//s
+      {
+        //s
         x: 3,
         y: 0,
         shape: [
@@ -19,9 +21,10 @@ export class Block {
           [2, 2, 0],
           [0, 0, 0],
         ],
-        color: "indigo"
+        color: "indigo",
       },
-      {//L
+      {
+        //L
         x: 3,
         y: 0,
         shape: [
@@ -29,9 +32,10 @@ export class Block {
           [3, 0, 0],
           [3, 3, 0],
         ],
-        color: "blue"
+        color: "blue",
       },
-      {// J
+      {
+        // J
         x: 3,
         y: 0,
         shape: [
@@ -39,43 +43,46 @@ export class Block {
           [0, 0, 4],
           [0, 4, 4],
         ],
-        color: "yellow"
+        color: "yellow",
       },
-      {// o
+      {
+        // o
         x: 3,
         y: 0,
         shape: [
           [5, 5],
           [5, 5],
         ],
-        color: "green"
+        color: "green",
       },
-      {// I
+      {
+        // I
         x: 3,
         y: 0,
         shape: [
           [0, 6, 0, 0],
           [0, 6, 0, 0],
           [0, 6, 0, 0],
-          [0, 6, 0, 0]
+          [0, 6, 0, 0],
         ],
         color: "orange",
       },
-      {// T
+      {
+        // T
         x: 3,
         y: 0,
         shape: [
           [0, 0, 0],
           [7, 7, 7],
-          [0, 7, 0]
+          [0, 7, 0],
         ],
         color: "purple",
-      }
+      },
     ];
   }
 
   getMINO() {
-    let random = Math.floor(Math.random() * 7);
+    const random = Math.floor(Math.random() * 7);
     return this.MINOS[random];
   }
 }
