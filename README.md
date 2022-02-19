@@ -9,6 +9,14 @@
 
 1.  HTML, CSS, JS, Canvers
 
+### ⚙ 실행해보기
+
+```js
+npm -g i serve
+serve
+Local: http://localhost:3000
+```
+
 > 👨‍💻 구현화면
 
 <div align=center>
