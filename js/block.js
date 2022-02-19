@@ -1,3 +1,13 @@
+export const Colors = {
+  red: "#ff0101",
+  indigo: "#9e7800",
+  blue: "#01afed",
+  yellow: "#f7e600",
+  green: "#00b050",
+  orange: "#fdc100",
+  purple: "#6c309d",
+};
+
 export default class Block {
   constructor() {
     this.MINOS = [
@@ -10,10 +20,10 @@ export default class Block {
           [0, 1, 1],
           [0, 0, 0],
         ],
-        color: "red",
+        color: Colors.red,
       },
       {
-        //s
+        //S
         x: 3,
         y: 0,
         shape: [
@@ -21,7 +31,7 @@ export default class Block {
           [2, 2, 0],
           [0, 0, 0],
         ],
-        color: "indigo",
+        color: Colors.indigo,
       },
       {
         //L
@@ -32,7 +42,7 @@ export default class Block {
           [3, 0, 0],
           [3, 3, 0],
         ],
-        color: "blue",
+        color: Colors.blue,
       },
       {
         // J
@@ -43,17 +53,17 @@ export default class Block {
           [0, 0, 4],
           [0, 4, 4],
         ],
-        color: "yellow",
+        color: Colors.yellow,
       },
       {
-        // o
+        // O
         x: 3,
         y: 0,
         shape: [
           [5, 5],
           [5, 5],
         ],
-        color: "green",
+        color: Colors.green,
       },
       {
         // I
@@ -65,7 +75,7 @@ export default class Block {
           [0, 6, 0, 0],
           [0, 6, 0, 0],
         ],
-        color: "orange",
+        color: Colors.orange,
       },
       {
         // T
@@ -76,7 +86,7 @@ export default class Block {
           [7, 7, 7],
           [0, 7, 0],
         ],
-        color: "purple",
+        color: Colors.purple,
       },
     ];
   }

@@ -1,16 +1,8 @@
-import Block from "./block.js";
+import Block, { Colors } from "./block.js";
 
 class App {
   constructor() {
-    this.color = [
-      "red",
-      "indigo",
-      "blue",
-      "yellow",
-      "green",
-      "orange",
-      "purple",
-    ];
+    this.color = Object.values(Colors);
     this.BLOCKSIZE = 30;
     this.COLUMNS = 25;
     this.ROWS = 15;
@@ -31,7 +23,6 @@ class App {
     this.ctx.scale(this.BLOCKSIZE, this.BLOCKSIZE);
     this.CTX_BACKGROUND_COLOR = "white";
     this.score = 0;
-
     this.nextCtx = this.nextCanvas.getContext("2d");
     this.nextCtx.scale(this.BLOCKSIZE, this.BLOCKSIZE);
 
@@ -93,7 +84,7 @@ class App {
       rows.forEach((values, x) => {
         if (values != 0) {
           this.ctx.fillStyle = this.color[values - 1];
-          this.ctx.fillRect(x, y, 0.9, 0.9);
+          this.ctx.fillRect(x, y, 0.95, 0.95);
         } else if (values > 0) {
           this.ctx.fillStyle = this.CTX_BACKGROUND_COLOR;
           this.ctx.fillRect(x, y, 1, 1);
@@ -125,7 +116,7 @@ class App {
       rows.forEach((values, x) => {
         this.nextCtx.fillStyle = this.nextblock.color;
         if (values > 0) {
-          this.nextCtx.fillRect(1 + x, 1 + y, 0.9, 0.9);
+          this.nextCtx.fillRect(1 + x, 1 + y, 0.95, 0.95);
         }
       });
     });
@@ -154,7 +145,7 @@ class App {
     this.block.shape.forEach((rows, y) => {
       rows.forEach((values, x) => {
         if (values > 0) {
-          this.ctx.fillRect(this.block.x + x, this.block.y + y, 0.9, 0.9);
+          this.ctx.fillRect(this.block.x + x, this.block.y + y, 0.95, 0.95);
         }
       });
     });
